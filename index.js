@@ -43,10 +43,20 @@ app.use(cors(corsOpts));
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  //set header first to allow request or origin domain (value can be different)
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, OPTIONS, DELETE');
   next();
 });
+
+//Preflight CORS handler
+if(req.method === 'OPTIONS') {
+  return res.status(200).json(({
+      body: "OK"
+  }))
+}
 
 // Email Sender
 app.post('/emailsend', function (req, res) {
@@ -104,4 +114,5 @@ app.get('/statuses', (req, res) => {
 
 app.listen(PORT, function() {
   console.log(`Listening on Port ${PORT}`);
+  console.log('testtt', envVar.EMAIL_ID)
 });
