@@ -12,6 +12,10 @@
           "dest": "index.js"
         }
     ],
+    "rewrites": [
+        { "source": "/api/:match*", "destination": "https://joysite2020-backend.vercel.app/:match*" }
+    
+    ],
     "headers": [
         {
           "source": "/api/(.*)",
