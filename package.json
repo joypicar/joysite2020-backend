@@ -15,7 +15,8 @@
     "dotenv": "^16.0.3",
     "express": "^4.17.1",
     "nodemailer": "^6.4.8",
-    "twit": "^2.2.11"
+    "twit": "^2.2.11",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "eslint": "^5.12.0",
