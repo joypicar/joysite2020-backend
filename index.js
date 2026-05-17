@@ -85,7 +85,6 @@ app.post('/emailsend', function (req, res) {
 // Twitter
 app.get('/api/tweets', async (req, res) => {
   const BEARER_TOKEN = envVar.TWITTER_BEARER_TOKEN;
-  console.log('token', BEARER_TOKEN)
   try {
     const response = await axios.get(
       'https://api.twitter.com/2/users/61741500/tweets',
