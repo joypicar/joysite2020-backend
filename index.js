@@ -9,21 +9,17 @@ const app = express();
 const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
 const envVar = process.env;
-const username = envVar.TWITTER_USERNAME;
+const axios = require('axios');
 
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
   auth: {
     user: envVar.EMAIL_ID,
     pass: envVar.EMAIL_PASSWORD
   }
-});
-
-const client = new Twitter({
-  consumer_key: envVar.TWITTER_CONSUMER_KEY,
-  consumer_secret: envVar.TWITTER_CONSUMER_SECRET,
-  access_token: envVar.TWITTER_ACCESS_TOKEN,
-  access_token_secret: envVar.TWITTER_ACCESS_TOKEN_SECRET
 });
 
 const corsOpts = {
@@ -87,23 +83,32 @@ app.post('/emailsend', function (req, res) {
 });
 
 // Twitter
-app.get('/statuses', (req, res) => {
-    const params = { 
-    screen_name: username, 
-    count: 1,
-  };   
-  client
-    .get(`/statuses/user_timeline`, params)
-    .then(timeline => {         
-      res.send(timeline);
-    })
-    .catch(error => {
-    res.send(error);
-  });      
+app.get('/api/tweets', async (req, res) => {
+  const BEARER_TOKEN = envVar.TWITTER_BEARER_TOKEN;
+  console.log('token', BEARER_TOKEN)
+  try {
+    const response = await axios.get(
+      'https://api.twitter.com/2/users/61741500/tweets',
+      {
+        headers: {
+          Authorization: `Bearer ${BEARER_TOKEN}`,
+        },
+        params: {
+          max_results: 5,
+          'tweet.fields': 'created_at,text'
+        }
+      }
+    );
+    res.json(response.data);
+  } catch (err) {
+    console.error('Twitter API error:', err.response?.data || err.message);
+    res.status(500).json({
+      error: 'Twitter API failed',
+      message: err.response?.data || err.message,
+    });
+  }
 });
 
 app.listen(PORT, function() {
   console.log(`Listening on Port ${PORT}`);
-  console.log('testtt', envVar.EMAIL_ID)
-  console.log('testtt', envVar.EMAIL_ID)
 });
